@@ -1,6 +1,5 @@
 from collections import defaultdict
-import os
-os.system("python qubo.py")
+
 
 def edge_coloring(edges, num_colors):
     # Create a dictionary to store the final color of each edge
@@ -16,6 +15,9 @@ def edge_coloring(edges, num_colors):
         available_colors -= adjacent_colors[u]
         available_colors -= adjacent_colors[v]
 
+        if len(available_colors)==0:
+          return 0
+    
         # Assign the smallest available color to the current edge
         color = min(available_colors)
         edge_colors[(u, v)] = color
@@ -27,4 +29,4 @@ def edge_coloring(edges, num_colors):
     return edge_colors
 
 
-print(edge_coloring(edge_list, colors))
+# print(edge_coloring(edge_list, colors))
