@@ -53,7 +53,7 @@ def qubo(G, colors, edge_list, solver):
     #     solver = SolverFactory('bonmin')
         
     solver = SolverFactory(solver)
-    solver.options['timelimit'] = 10
+    # solver.options['timelimit'] = 10
     result = solver.solve(model)
     print("------------------------", result, "------------------------")
 

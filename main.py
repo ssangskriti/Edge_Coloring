@@ -73,7 +73,7 @@ print("greedy solver time: ", (greedy_time-start))
 
 # -------------------------solver---------------------------------
 
-solvers = ["gurobi"]
+solvers = ["gurobi","bonmin","cplex_direct","xpress"]
 
 for solver in solvers:
     # ----------------------------delta coloring----------------------
