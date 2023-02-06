@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from pyomo.environ import *
-
+import gurobipy
 import xpress
 
 
@@ -43,40 +43,41 @@ def qubo(G, colors, edge_list, solver):
 
     obj_expression(model)
     
-    if solver == 'cplex':
-        solver = SolverFactory('cplex_direct')
-    elif solver == 'xpress':
-        solver = SolverFactory('xpress')
-    elif solver == 'couenne':
-        solver = SolverFactory('couenne')
-    elif solver == 'bonmin':
-        solver = SolverFactory('bonmin')
+    # if solver == 'gurobi':
+    #     solver = SolverFactory('gurobi')
+    # elif solver == 'cplex':
+    #     solver = SolverFactory('cplex_direct')
+    # elif solver == 'xpress':
+    #     solver = SolverFactory('xpress')
+    # elif solver == 'bonmin':
+    #     solver = SolverFactory('bonmin')
         
+    solver = SolverFactory(solver)
     solver.options['timelimit'] = 10
     result = solver.solve(model)
-    print(result)
+    print("------------------------", result, "------------------------")
 
     # model.pprint()
-    # time = result.
+    
     
     qubo_coloring = {}
-    count = 1
+    # count = 1
     for u in model.E:
       # print("Edge: ", count)
-      count+=1
+      # count+=1
       for k in model.K:
           if model.x[u,k].value == 1:
               # print("Edge ", u, " is assigned color ", k)
               qubo_coloring[u] = k
         
-    # correctness
-    # for a, b in qubo_coloring.keys():
-    #   for c,d in qubo_coloring.keys():
-    #     if (a,b)!=(c,d):
-    #       if (a==c or a==d or b==c or b==d) and qubo_coloring[(a,b)] == qubo_coloring[(c,d)]:
-    #         qubo_coloring.clear()
-    #         break
-    #   if len(qubo_coloring)==0:
-    #     break
+    #correctness
+    for a, b in qubo_coloring.keys():
+      for c,d in qubo_coloring.keys():
+        if (a,b)!=(c,d):
+          if (a==c or a==d or b==c or b==d) and qubo_coloring[(a,b)] == qubo_coloring[(c,d)]:
+            qubo_coloring.clear()
+            break
+      if len(qubo_coloring)==0:
+        break
     
     return qubo_coloring

@@ -11,7 +11,7 @@ G.add_edges_from([(0,2),(0,4),(1,2),(1,7),(2,3),(3,5),(3,4),(4,5),(4,6),(6,7)])
 # nx.draw(G)
 # plt.show()
 
-
+# ----------------------graph-stats------------------------------
 
 # edges to edgelist
 e = len(G.edges)
@@ -59,41 +59,52 @@ print("average degree = ", avg_deg)
 
 
 
-colors = max_deg
+# ---------------------greedy coloring---------------------------
+
+
 start = time.time()
-qubo_coloring = qubo(G, colors, edge_list, 'cplex')
-qubo_time = time.time()
-greedy_coloring = edge_coloring(edge_list, colors)
+greedy_coloring, num_colors = edge_coloring(edge_list, e)
 greedy_time = time.time()
-print("no of colors: ", colors)
-if greedy_coloring == 0:
-    print("no greedy solution")
-else:
-    print("Greedy solution: ", greedy_coloring)
-    print("greedy solver time: ", (greedy_time-qubo_time))
-if len(qubo_coloring)==0:
-  print("no qubo solution")
-else:
-  print(qubo_coloring)
-  print("qubo solver time: ", (qubo_time-start))
+
+print("Greedy solution: ---------- ", greedy_coloring)
+print("number of colors for greedy solution: ", num_colors)
+print("greedy solver time: ", (greedy_time-start))
 
 
+# -------------------------solver---------------------------------
 
-if len(qubo_coloring) == 0:
-    colors = max_deg+1
+solvers = ["gurobi"]
+
+for solver in solvers:
+    # ----------------------------delta coloring----------------------
+
+    colors = max_deg
+
     start = time.time()
-    qubo_coloring = qubo(G, colors, edge_list, 'cplex')
+    qubo_coloring = qubo(G, colors, edge_list, solver)
     qubo_time = time.time()
-    greedy_coloring = edge_coloring(edge_list, colors)
-    greedy_time = time.time()
-    print("no of colors: ", colors)
-    if greedy_coloring == 0:
-        print("no greedy solution")
-    else:
-        print("Greedy solution: ", greedy_coloring)
-        print("greedy solver time: ", (greedy_time-qubo_time))
+
+
+    print("no of colors for qubo: ", colors)
     if len(qubo_coloring)==0:
-      print("no qubo solution")
+      print("-----no qubo solution for delta coloring------")
     else:
-      print(qubo_coloring)
-      print("qubo solver time: ", (qubo_time-start))
+      print("qubo solution: ---------", qubo_coloring)
+      print(solver, " solver time: ", (qubo_time-start))
+
+    #  -----------------------delta+1 coloring------------------------
+
+    if len(qubo_coloring) == 0:
+
+        colors = max_deg+1
+        start = time.time()
+        qubo_coloring = qubo(G, colors, edge_list, solver)
+        qubo_time = time.time()
+
+
+        print("no of colors for qubo: ", colors)
+        if len(qubo_coloring)==0:
+          print("-----no qubo solution for delta+1 coloring------")
+        else:
+          print("qubo solution: ---------", qubo_coloring)
+          print(solver, " solver time: ", (qubo_time-start))
