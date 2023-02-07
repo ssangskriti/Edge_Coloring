@@ -3,11 +3,13 @@ import matplotlib.pyplot as plt
 from pyomo.environ import *
 import gurobipy
 import xpress
-
-
+import time
 
 def qubo(G, colors, edge_list, solver):
     '''qubo solver'''
+    
+    # start = time.time()
+    
     model = ConcreteModel()
     model.K = RangeSet(1, colors)
     model.E = Set(initialize= edge_list)
@@ -55,6 +57,11 @@ def qubo(G, colors, edge_list, solver):
     solver = SolverFactory(solver)
     # solver.options['timelimit'] = 10
     result = solver.solve(model)
+    
+    # end = time.time()
+    # total_time = end-start
+    total_time = result.Solver.time
+    
     print("------------------------", result, "------------------------")
 
     # model.pprint()
@@ -69,7 +76,9 @@ def qubo(G, colors, edge_list, solver):
           if model.x[u,k].value == 1:
               # print("Edge ", u, " is assigned color ", k)
               qubo_coloring[u] = k
-        
+       
+    
+    
     #correctness
     for a, b in qubo_coloring.keys():
       for c,d in qubo_coloring.keys():
@@ -80,4 +89,4 @@ def qubo(G, colors, edge_list, solver):
       if len(qubo_coloring)==0:
         break
     
-    return qubo_coloring
+    return qubo_coloring, total_time
