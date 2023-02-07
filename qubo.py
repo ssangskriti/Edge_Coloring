@@ -1,8 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from pyomo.environ import *
-import gurobipy
-import xpress
+# import gurobipy
 import time
 
 def qubo(G, colors, edge_list, solver):
