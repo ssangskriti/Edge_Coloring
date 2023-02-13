@@ -15,7 +15,7 @@ import networkx as nx
 
 
 
-graphs= [nx.dorogovtsev_goltsev_mendes_graph(2), nx.dorogovtsev_goltsev_mendes_graph(1)]
+graphs= [nx.dorogovtsev_goltsev_mendes_graph(2)]
 
 graph_list={}
 count = 1

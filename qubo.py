@@ -20,41 +20,62 @@ def qubo(G, colors, edge_list, solver):
 
     # model.x.pprint()
 
-    model.obj = Objective(expr = 0, sense=minimize)
-    # model.pprint()
-
 
     # coloring constraint
     model.color_constr = ConstraintList()
     for a,b in G.edges:
         model.color_constr.add(sum(model.x[a,b,k] for k in model.K) == 1)
 
-
-    def obj_expression(model):
-
-      for a,b in G.edges:
+    model.edge_constr = ConstraintList()
+    for a,b in G.edges:
         for c,d in G.edges:
-          for k in RangeSet(1,colors):
-            P = 20
-            if a!=c and a!=d and b!=c and b!= d:
-              model.obj.expr += model.x[a, b, k] * model.x[c, d, k]
-            else:
-              model.obj.expr+= P* model.x[a,b,k]*model.x[c,d,k]
+            model.edge_constr.add(sum(model.x[a,b,k]*model.x[c,d,k] for k in RangeSet(1,colors)) <=1)
+
+#     def obj_expression(model):
+
+#       for a,b in G.edges:
+#         for c,d in G.edges:
+#           for k in RangeSet(1,colors):
+#             P = 20
+#             if a!=c and a!=d and b!=c and b!= d:
+#               model.obj.expr += model.x[a, b, k] * model.x[c, d, k]
+#             else:
+#               model.obj.expr+= P* model.x[a,b,k]*model.x[c,d,k]
 
 
-    obj_expression(model)
+    # obj_expression(model)
     
-    # if solver == 'gurobi':
-    #     solver = SolverFactory('gurobi')
-    # elif solver == 'cplex':
-    #     solver = SolverFactory('cplex_direct')
-    # elif solver == 'xpress':
-    #     solver = SolverFactory('xpress')
-    # elif solver == 'bonmin':
-    #     solver = SolverFactory('bonmin')
-        
+    # model.penal = Var(domain=Binary)
+    # model.penalties = ConstraintList()
+    # model.penalties.add(expr = model.x <=P*model.penal)
+
+    
+    model.obj = Objective(expr = 0, sense=minimize)
+    # model.pprint()
+    P = 4
+    def obj_expression(P):
+        for a,b in G.edges:
+            for c,d in G.edges:
+                for k in RangeSet(1,colors): 
+                    if a!=c and a!=d and b!=c and b!= d:
+                        continue
+                    else:
+                        model.obj.expr+= P* model.x[a,b,k]*model.x[c,d,k]
+    
+    obj_expression(P)
+    
     solver = SolverFactory(solver)
-    # solver.options['timelimit'] = 10
+    
+    opt = solver
+    if opt == 'gurobi':
+      solver.options['TimeLimit'] = 10
+    elif opt=='bonmin':
+      solver.options['bonmin.time_limit'] = 10
+      # solver.options['bonmin.solution_limit'] = '1'
+    elif opt=='ipopt':
+      solver.options['max_cpu_time'] = 10
+    
+    
     result = solver.solve(model)
     
     # end = time.time()

@@ -1,11 +1,12 @@
 import sys 
 import os
 from qubo import *
+# from gurobi_qubo import *
 from greedy import *
 import networkx as nx
 import time
 from graphs.networkx_graphs import *
-
+import csv
 
 
 for key, graph in graph_list.items():
@@ -71,7 +72,7 @@ for key, graph in graph_list.items():
     greedy_coloring, num_colors = edge_coloring(edge_list, e)
     greedy_time = time.time()
 
-    print("Greedy solution: ---------- ", greedy_coloring)
+    # print("Greedy solution: ---------- ", greedy_coloring)
     print("number of colors for greedy solution: ", num_colors)
     print("greedy solver time: ", (greedy_time-start))
 
@@ -101,7 +102,7 @@ for key, graph in graph_list.items():
     
     # -------------------------solver---------------------------------
 
-    solvers = ["gurobi","bonmin"]
+    solvers = ["gurobi","bonmin","ipopt"]
 
     for solver in solvers:
         # ----------------------------delta coloring----------------------
@@ -117,7 +118,7 @@ for key, graph in graph_list.items():
         if len(qubo_coloring)==0:
           print("-----no qubo solution for delta coloring------")
         else:
-          print("qubo solution: ---------", qubo_coloring)
+          # print("qubo solution: ---------", qubo_coloring)
           print(solver, " solver time: ", qubo_time)
 
         #  -----------------------delta+1 coloring------------------------
@@ -133,7 +134,7 @@ for key, graph in graph_list.items():
             if len(qubo_coloring)==0:
               print("-----no qubo solution for delta+1 coloring------")
             else:
-              print("qubo solution: ---------", qubo_coloring)
+              # print("qubo solution: ---------", qubo_coloring)
               print(solver, " solver time: ", qubo_time)
                 
 #         with open('results.txt', 'a') as f:
