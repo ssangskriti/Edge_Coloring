@@ -23,14 +23,21 @@ def qubo(G, colors, edge_list, solver):
 
     # coloring constraint
     model.color_constr = ConstraintList()
-    for a,b in G.edges:
+    for a,b in edge_list:
         model.color_constr.add(sum(model.x[a,b,k] for k in model.K) == 1)
-
+    
+    # model.color_constr.pprint()
+    
     model.edge_constr = ConstraintList()
-    for a,b in G.edges:
-        for c,d in G.edges:
-            model.edge_constr.add(sum(model.x[a,b,k]*model.x[c,d,k] for k in RangeSet(1,colors)) <=1)
+    for a,b in edge_list:
+        for c,d in edge_list:
+            if (a,b)!=(c,d):
+                if (a==c or a==d or b==c or b==d):
+                    model.edge_constr.add(sum(model.x[a,b,k]+model.x[c,d,k] for k in RangeSet(1,colors)) <=1)
 
+    # model.edge_constr.pprint()
+    
+    
 #     def obj_expression(model):
 
 #       for a,b in G.edges:
@@ -45,7 +52,7 @@ def qubo(G, colors, edge_list, solver):
 
     # obj_expression(model)
     
-    # model.penal = Var(domain=Binary)
+    # model.penal = Var(within=Binary)
     # model.penalties = ConstraintList()
     # model.penalties.add(expr = model.x <=P*model.penal)
 
@@ -61,6 +68,7 @@ def qubo(G, colors, edge_list, solver):
                         continue
                     else:
                         model.obj.expr+= P* model.x[a,b,k]*model.x[c,d,k]
+                        # print(model.obj.expr)
     
     obj_expression(P)
     

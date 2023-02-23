@@ -1,7 +1,7 @@
 import sys 
 import os
-from qubo import *
-# from gurobi_qubo import *
+# from qubo import *
+from gurobi_qubo import *
 from greedy import *
 import networkx as nx
 import time
@@ -102,7 +102,7 @@ for key, graph in graph_list.items():
     
     # -------------------------solver---------------------------------
 
-    solvers = ["gurobi","bonmin","ipopt"]
+    solvers = ["gurobi"]
 
     for solver in solvers:
         # ----------------------------delta coloring----------------------
@@ -110,7 +110,7 @@ for key, graph in graph_list.items():
         colors = max_deg
 
         
-        qubo_coloring, qubo_time = qubo(G, colors, edge_list, solver)
+        qubo_coloring, qubo_time = qubo(G, colors, edge_list)
         
 
 
@@ -127,7 +127,7 @@ for key, graph in graph_list.items():
 
             colors = max_deg+1
             
-            qubo_coloring, qubo_time = qubo(G, colors, edge_list, solver)
+            qubo_coloring, qubo_time = qubo(G, colors, edge_list)
 
 
             print("no of colors for qubo: ", colors)
