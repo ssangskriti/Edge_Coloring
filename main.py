@@ -110,7 +110,7 @@ for key, graph in graph_list.items():
         colors = max_deg
 
         
-        qubo_coloring, qubo_time = qubo(G, colors, edge_list)
+        qubo_coloring, qubo_time = qubo(colors, edge_list)
         
 
 
@@ -127,7 +127,7 @@ for key, graph in graph_list.items():
 
             colors = max_deg+1
             
-            qubo_coloring, qubo_time = qubo(G, colors, edge_list)
+            qubo_coloring, qubo_time = qubo(colors, edge_list)
 
 
             print("no of colors for qubo: ", colors)

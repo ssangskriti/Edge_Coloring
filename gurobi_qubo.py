@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from gurobipy import *
 import time
 
-def qubo(G,colors, edge_list):
+def qubo(colors, edge_list):
     '''qubo solver'''
     
     start = time.time()
@@ -44,33 +44,19 @@ def qubo(G,colors, edge_list):
     # print(model.display())
     
     model.setObjective(quicksum(x[a, b, k] for a, b in edge_list for k in color), GRB.MINIMIZE)
-    
-    
-    
-    # for a,b in edge_list:
-    #     for c,d in edge_list:
-    #         # model.setObjective(quicksum( (x[a, b, k] * x[c, d, k]) for k in color), GRB.MINIMIZE)
-    #         if (a,b)!=(c,d):
-    #             P = 20
-    #             if a!=c and a!=d and b!=c and b!= d:
-    #                 model.setObjective(quicksum( (x[a, b, k] * x[c, d, k]) for k in color), GRB.MINIMIZE)
-    #                 model.update()
-    #                 # continue
-    #             else:
-    #                 model.setObjective(quicksum((P* x[a,b,k]*x[c,d,k]) for k in color), GRB.MINIMIZE)
-    #                 model.update()
-                    # print(x[a,b,k]," ",x[c,d,k])
                 
     model.update()
-    # Optimize the model
+    
+    # model.setParam("TimeLimit", 600.0)
+    
     model.optimize()
     
     end = time.time()
     total_time = end-start
     
-    # print("------------------------", model.status, "------------------------")
     
     qubo_coloring = {}
+    
     # for v in model.getVars():
     #     # print('%s %g' % (v.VarName, v.X))
     #     if int(v.X) == 1:
@@ -80,13 +66,8 @@ def qubo(G,colors, edge_list):
         if int(x[a, b, k].X) == 1:
             qubo_coloring[(a, b)] = k
     
-    # qubo_coloring = {}
-    # for a,b in edge_list:
-    #     for k in range(1, colors+1):
-    #         if x[a,b,k] == 1:
-    #             qubo_coloring[(a,b)] = k
     
-    # print(qubo_coloring)
+    print(qubo_coloring)
     
     # Check if the coloring is valid
     for a, b in qubo_coloring.keys():
